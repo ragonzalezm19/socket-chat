@@ -31,10 +31,6 @@ socket.on('personList', function(response) {
   console.log('Users connected', response)
 })
 
-// Enviar información
-socket.emit('enviarMensaje', {
-  usuario: 'Fernando',
-  mensaje: 'Hola Mundo'
-}, function(resp) {
-  console.log('Respuesta del server:', resp)
+socket.on('privateMessage', function(message) {
+  console.log('Privite message', message)
 })

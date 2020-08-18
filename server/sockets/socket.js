@@ -21,7 +21,7 @@ io.on('connection', (client) => {
 
   client.on('createMessage', (data) => {
     const person = users.getPerson(client.id)
-    const message = createMessage(person.name, data)
+    const message = createMessage(person.name, data.message)
 
     client.broadcast.emit('createMessage', message)
   })
@@ -32,5 +32,10 @@ io.on('connection', (client) => {
 
     client.broadcast.emit('createMessage', createMessage('Admin', `${userDeleted.name} has left the chat`))
     client.broadcast.emit('personList', users.getAllPersons())
+  })
+
+  client.on('privateMessage', (data) => {
+    const person = users.getPerson(client.id)
+    client.broadcast.to(data.to).emit('privateMessage', createMessage(person.name, data.message))
   })
 })
