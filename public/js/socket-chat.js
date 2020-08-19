@@ -8,7 +8,7 @@ if (!params.has('name') || !params.has('room')) {
 
 const user = {
   name: params.get('name'),
-  hall: params.get('room')
+  room: params.get('room')
 }
 
 // Escuchar información

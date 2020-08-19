@@ -18,9 +18,8 @@ class Users {
 
   getAllPersons = () => this.persons
 
-  getPersonByHall(hall) {
-    // TODO
-  }
+  getPersonByRoom = (room) => this.persons.filter(p => p.room === room)
+
 
   deletePerson(id) {
     const personDeleted = this.getPerson(id)

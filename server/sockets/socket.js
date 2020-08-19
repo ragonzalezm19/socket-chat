@@ -6,8 +6,7 @@ let users = new Users()
 
 io.on('connection', (client) => {
   client.on('entryChat', (user, callback) => {
-    console.log(user)
-    if (!user.name || user.room) {
+    if (!user.name || !user.room) {
       return callback({
         err: true,
         message: 'Name/Room is required'
@@ -15,9 +14,10 @@ io.on('connection', (client) => {
     }
 
     client.join(user.room)
-    const persons = users.addPerson(client.id, user.name, user.room)
 
-    client.broadcast.emit('personList', users.getAllPersons())
+    users.addPerson(client.id, user.name, user.room)
+    const persons = users.getPersonByRoom(user.room)
+    client.broadcast.to(user.room).emit('personList', persons)
 
     callback(persons)
   })
@@ -26,15 +26,14 @@ io.on('connection', (client) => {
     const person = users.getPerson(client.id)
     const message = createMessage(person.name, data.message)
 
-    client.broadcast.emit('createMessage', message)
+    client.broadcast.to(person.room).emit('createMessage', message)
   })
 
   client.on('disconnect', () => {
     const userDeleted = users.deletePerson(client.id)
-      //console.log('User disconnected', userDeleted)
 
-    client.broadcast.emit('createMessage', createMessage('Admin', `${userDeleted.name} has left the chat`))
-    client.broadcast.emit('personList', users.getAllPersons())
+    client.broadcast.to(userDeleted.room).emit('createMessage', createMessage('Admin', `${userDeleted.name} has left the chat`))
+    client.broadcast.to(userDeleted.room).emit('personList', users.getPersonByRoom(userDeleted.room))
   })
 
   client.on('privateMessage', (data) => {
