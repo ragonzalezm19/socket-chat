@@ -1,18 +1,21 @@
 const { io } = require('./../server')
-const {  Users } = require('./../classes/users')
+const { Users } = require('./../classes/users')
 const { createMessage } = require('./../utils/utils')
 
 let users = new Users()
 
 io.on('connection', (client) => {
   client.on('entryChat', (user, callback) => {
-    if (!user.name) {
+    console.log(user)
+    if (!user.name || user.room) {
       return callback({
         err: true,
-        message: 'Name is required'
+        message: 'Name/Room is required'
       })
     }
-    const persons = users.addPerson(client.id, user.name)
+
+    client.join(user.room)
+    const persons = users.addPerson(client.id, user.name, user.room)
 
     client.broadcast.emit('personList', users.getAllPersons())
 
