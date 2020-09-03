@@ -22,19 +22,57 @@ function renderUsers(persons) {
 
 }
 
-function renderMessage(message) {
+function renderMessage(message, reverse) {
   let html = ''
+  const date = new Date(message.date)
+  const time = `${date.getHours()}:${date.getMinutes()}`
 
-  html += `<li class="animated fadeIn">`
-  html += `  <div class="chat-img"><img src="assets/images/users/1.jpg" alt="user" /></div>`
-  html += `  <div class="chat-content">`
-  html += `    <h5>${message.name}</h5>`
-  html += `    <div class="box bg-light-info">${message.message}</div>`
-  html += `  </div>`
-  html += `  <div class="chat-time">${message.date}</div>`
-  html += `</li>`
+  let adminClass = 'info'
+
+  if (message.name === 'Admin') {
+    adminClass = 'danger'
+  }
+
+  if (reverse) {
+    html += `<li class="reverse animated fadeIn">`
+    html += `  <div class="chat-content">`
+    html += `    <h5>${message.name}</h5>`
+    html += `    <div class="box bg-light-inverse">${message.message}</div>`
+    html += `  </div>`
+    html += `  <div class="chat-img"><img src="assets/images/users/5.jpg" alt="user" /></div>`
+    html += `  <div class="chat-time">${time}</div>`
+    html += `</li>`
+  } else {
+    html += `<li class="animated fadeIn">`
+    if (message.name !== 'Admin') {
+      html += `  <div class="chat-img"><img src="assets/images/users/1.jpg" alt="user" /></div>`
+    }
+    html += `  <div class="chat-content">`
+    html += `    <h5>${message.name}</h5>`
+    html += `    <div class="box bg-light-${adminClass}">${message.message}</div>`
+    html += `  </div>`
+    html += `  <div class="chat-time">${time}</div>`
+    html += `</li>`
+  }
 
   divChatbox.append(html)
+}
+
+function scrollBottom() {
+
+  // selectors
+  var newMessage = divChatbox.children('li:last-child')
+
+  // heights
+  var clientHeight = divChatbox.prop('clientHeight')
+  var scrollTop = divChatbox.prop('scrollTop')
+  var scrollHeight = divChatbox.prop('scrollHeight')
+  var newMessageHeight = newMessage.innerHeight()
+  var lastMessageHeight = newMessage.prev().innerHeight() || 0
+
+  if (clientHeight + scrollTop + newMessageHeight + lastMessageHeight >= scrollHeight) {
+    divChatbox.scrollTop(scrollHeight)
+  }
 }
 
 // Listeners
@@ -56,6 +94,7 @@ formSend.on('submit', function(e) {
     message: txtMessage.val()
   }, function(message) {
     txtMessage.val('').focus()
-    renderMessage(message)
+    renderMessage(message, true)
+    scrollBottom()
   })
 })

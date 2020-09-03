@@ -18,6 +18,7 @@ io.on('connection', (client) => {
     users.addPerson(client.id, user.name, user.room)
     const persons = users.getPersonByRoom(user.room)
     client.broadcast.to(user.room).emit('personList', persons)
+    client.broadcast.to(user.room).emit('createMessage', createMessage('Admin', `${user.name} has join the chat`))
 
     callback(persons)
   })
