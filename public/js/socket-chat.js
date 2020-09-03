@@ -27,7 +27,8 @@ socket.on('disconnect', function() {
 })
 
 socket.on('createMessage', function(message) {
-  console.log('Server', message)
+  // console.log('Server', message)
+  renderMessage(message)
 })
 
 socket.on('personList', function(response) {

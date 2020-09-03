@@ -22,11 +22,13 @@ io.on('connection', (client) => {
     callback(persons)
   })
 
-  client.on('createMessage', (data) => {
+  client.on('createMessage', (data, callback) => {
     const person = users.getPerson(client.id)
     const message = createMessage(person.name, data.message)
 
     client.broadcast.to(person.room).emit('createMessage', message)
+
+    callback(message)
   })
 
   client.on('disconnect', () => {
